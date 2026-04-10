@@ -8,8 +8,8 @@ Program Project Based Internship kolaborasi Rakamin Academy dan Kimia Farma Big 
 Tugas akhir/Final project yang harus dibuat pada program ini adalah membuat dashboard dari data penjualan salah satu produk Kimia Farma dalam satu tahun dari data mentah yang telah disediakan.
 
 # Visualization
+![kimiafarma-helmypramudita_page-0001](https://github.com/user-attachments/assets/e42cebbc-057c-4c01-a3ca-135583715598)
 
-![kimiafarma-helmypramudita (1)_page-0001](https://github.com/helmypram/PBI_Kimia_Farma/assets/122775620/20dcca41-1da3-4481-a46a-b0185079dc1a)
 
 Figure 1: Performance Analytics Kimia Farma Business Year 2020-2023
 Dashboard: https://lookerstudio.google.com/reporting/b95214e8-d491-4263-b89b-6073e58b2530
