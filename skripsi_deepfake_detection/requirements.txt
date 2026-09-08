@@ -1,0 +1,26 @@
+# ============================================================
+# Sistem Deteksi Deepfake Video (CNN-BiLSTM) - Dependensi
+# Diuji pada Python 3.10
+# ============================================================
+
+# --- Aplikasi Web (Flask) ---
+Flask==3.0.3
+Flask-SQLAlchemy==3.1.1
+Flask-Login==0.6.3
+Werkzeug==3.0.3
+
+# --- Deep Learning / Machine Learning ---
+tensorflow==2.13.0
+numpy==1.24.3
+scikit-learn==1.3.2
+
+# --- Computer Vision (deteksi & ekstraksi wajah) ---
+opencv-python==4.8.1.78
+mtcnn==0.1.1
+
+# --- Visualisasi & Utilitas ---
+matplotlib==3.7.5
+tqdm==4.66.1
+
+# --- Server Produksi (opsional) ---
+waitress==3.0.0

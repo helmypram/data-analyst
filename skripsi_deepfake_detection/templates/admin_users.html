@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Kelola User — Admin DeepDetect{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+  <div class="container">
+    <div class="page-head-row">
+      <div>
+        <span class="eyebrow">Admin</span>
+        <h1>Kelola <span class="accent">User</span></h1>
+        <p>Daftar semua user terdaftar — klik "Lihat Riwayat" untuk melihat scan history per-user.</p>
+      </div>
+      <a href="{{ url_for('admin_dashboard') }}" class="btn btn-ghost">← Kembali ke Dashboard</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <div class="stat-card" style="max-width: 320px; margin-bottom: 32px;">
+      <div class="sicon acc">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+          <circle cx="9" cy="7" r="4"></circle>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+        </svg>
+      </div>
+      <div>
+        <div class="sval">{{ users|length }}</div>
+        <div class="slbl">Total User Terdaftar</div>
+      </div>
+    </div>
+
+    {% if users and users|length > 0 %}
+      <div class="table-wrap">
+        <table class="data">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Username</th>
+              <th>Role</th>
+              <th>Total Scan</th>
+              <th>Fake Detected</th>
+              <th style="text-align:right;">Aksi</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for user in users %}
+              <tr>
+                <td class="mono">#{{ "%04d"|format(user.id) }}</td>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="width:32px;height:32px;border-radius:50%;background:var(--ink);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:0.85rem;">
+                      {{ user.username[0]|upper }}
+                    </span>
+                    <span style="font-weight:600;">{{ user.username }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge {% if user.role == 'admin' %}admin{% else %}user{% endif %}">{{ user.role }}</span>
+                </td>
+                <td class="mono">{{ user.total_scans if user.total_scans is defined else (user.scans|length if user.scans else 0) }}</td>
+                <td class="mono" style="color: var(--danger); font-weight: 700;">{{ user.fake_count if user.fake_count is defined else 0 }}</td>
+                <td style="text-align:right;">
+                  <a href="{{ url_for('admin_user_history', user_id=user.id) }}" class="btn btn-ghost btn-sm">
+                    Lihat Riwayat →
+                  </a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <div class="empty-state">
+        <h3>Belum ada user</h3>
+        <p>Belum ada user terdaftar di sistem.</p>
+      </div>
+    {% endif %}
+
+  </div>
+</section>
+
+{% endblock %}

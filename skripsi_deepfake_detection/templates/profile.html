@@ -1,0 +1,107 @@
+{% extends "base.html" %}
+{% block title %}Profil — DeepDetect{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+  <div class="container">
+    <span class="eyebrow">Akun</span>
+    <h1>Profil <span class="accent">{{ current_user.username }}</span></h1>
+    <p>Kelola informasi akun, password, dan lihat statistik scan Anda.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="profile-grid">
+
+      <!-- LEFT: Profile card -->
+      <div>
+        <div class="profile-card">
+          <div class="pavatar">{{ current_user.username[0]|upper }}</div>
+          <h2>{{ current_user.username }}</h2>
+          <span class="badge {% if current_user.role == 'admin' %}admin{% else %}user{% endif %}">{{ current_user.role }}</span>
+          <div class="uid">ID: #{{ "%04d"|format(current_user.id) }}</div>
+
+          <div class="big-num">{{ scan_count or 0 }}</div>
+          <div class="big-lbl">Total Scan</div>
+
+          {% if scan_count and scan_count > 0 %}
+          <div class="breakdown">
+            {% set fake_pct = (fake_count / scan_count * 100) if scan_count > 0 else 0 %}
+            {% set real_pct = (real_count / scan_count * 100) if scan_count > 0 else 0 %}
+            <div class="breakdown-row fake">
+              <div class="lbl-row">
+                <span class="name">Fake Detected</span>
+                <span class="num">{{ fake_count or 0 }} ({{ "%.0f"|format(fake_pct) }}%)</span>
+              </div>
+              <div class="bar"><div class="fill" style="width: {{ fake_pct }}%;"></div></div>
+            </div>
+            <div class="breakdown-row real">
+              <div class="lbl-row">
+                <span class="name">Real Verified</span>
+                <span class="num">{{ real_count or 0 }} ({{ "%.0f"|format(real_pct) }}%)</span>
+              </div>
+              <div class="bar"><div class="fill" style="width: {{ real_pct }}%;"></div></div>
+            </div>
+          </div>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- RIGHT: Password + recent -->
+      <div>
+        <div class="card" style="margin-bottom: 24px;">
+          <h3>Ganti Password</h3>
+          <p class="sub">Pastikan password baru cukup kuat dan tidak digunakan di akun lain.</p>
+
+          <form method="POST" action="{{ url_for('change_password') }}">
+            <div class="form-group">
+              <label for="current_password">Password Sekarang</label>
+              <input type="password" id="current_password" name="current_password" required autocomplete="current-password">
+            </div>
+            <div class="form-group">
+              <label for="new_password">Password Baru</label>
+              <input type="password" id="new_password" name="new_password" required autocomplete="new-password" minlength="6">
+            </div>
+            <div class="form-group">
+              <label for="confirm_password">Konfirmasi Password Baru</label>
+              <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" minlength="6">
+            </div>
+            <button type="submit" class="btn btn-primary">Update Password</button>
+          </form>
+        </div>
+
+        <div class="card">
+          <h3>Scan Terakhir</h3>
+          <p class="sub">5 hasil scan paling baru</p>
+
+          {% if recent_scans and recent_scans|length > 0 %}
+            <div class="meta-rows">
+              {% for scan in recent_scans %}
+                {% set is_fake = scan.prediction == 'FAKE' %}
+                <div class="meta-row">
+                  <div>
+                    <div style="font-weight:600;font-size:0.92rem;">{{ scan.filename }}</div>
+                    <div class="mono" style="font-size:0.78rem;color:var(--ink-mute);margin-top:2px;">
+                      {{ scan.timestamp.strftime('%d %b %Y, %H:%M') if scan.timestamp else '' }}
+                    </div>
+                  </div>
+                  <span class="badge {% if is_fake %}fake{% else %}real{% endif %}">{{ scan.prediction }}</span>
+                </div>
+              {% endfor %}
+            </div>
+            <div style="margin-top: 20px;">
+              <a href="{{ url_for('history') }}" class="btn btn-ghost btn-sm">Lihat Semua Riwayat →</a>
+            </div>
+          {% else %}
+            <p class="muted" style="margin: 20px 0;">Belum ada scan. <a href="{{ url_for('home') }}#scanner" style="color:var(--accent);font-weight:600;">Mulai scan pertama →</a></p>
+          {% endif %}
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}

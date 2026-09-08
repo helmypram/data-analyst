@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% block title %}Admin Dashboard — DeepDetect{% endblock %}
+
+{% block content %}
+
+<section class="page-head">
+  <div class="container">
+    <div class="page-head-row">
+      <div>
+        <span class="eyebrow">Admin</span>
+        <h1>Dashboard <span class="accent">Overview</span></h1>
+        <p>Ringkasan aktivitas sistem dan statistik penggunaan platform.</p>
+      </div>
+      <a href="{{ url_for('admin_users') }}" class="btn btn-outline">Kelola User</a>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+
+    <!-- KPI Stats -->
+    <div class="stats-grid" style="margin-bottom: 32px;">
+      <div class="stat-card">
+        <div class="sicon ink">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 3v18h18"></path>
+            <path d="M7 12l4-4 4 4 5-5"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="sval">{{ total_scans or 0 }}</div>
+          <div class="slbl">Total Scan</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sicon danger">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <div>
+          <div class="sval">{{ total_fake or 0 }}</div>
+          <div class="slbl">Fake Detected</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sicon ok">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+        </div>
+        <div>
+          <div class="sval">{{ total_real or 0 }}</div>
+          <div class="slbl">Real Verified</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="sicon acc">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <div>
+          <div class="sval">{{ total_users or 0 }}</div>
+          <div class="slbl">Total User</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detection ratio + System status -->
+    <div class="two-col" style="margin-bottom: 32px;">
+      <div class="card">
+        <h3>Rasio Deteksi</h3>
+        <p class="sub">Distribusi hasil scan keseluruhan sistem</p>
+
+        {% set ratio = fake_ratio if fake_ratio is defined else 0 %}
+        <div style="font-size: 3.2rem; font-weight: 800; letter-spacing: -0.03em; line-height: 1; color: var(--accent); margin: 24px 0 8px;">
+          {{ "%.1f"|format(ratio) }}<span style="font-size: 1.6rem; color: var(--ink-mute);">%</span>
+        </div>
+        <div style="color: var(--ink-mute); font-size: 0.85rem; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">
+          Persentase Fake
+        </div>
+
+        <div class="breakdown">
+          <div class="breakdown-row fake">
+            <div class="lbl-row">
+              <span class="name">Fake</span>
+              <span class="num">{{ total_fake or 0 }} ({{ "%.0f"|format(ratio) }}%)</span>
+            </div>
+            <div class="bar"><div class="fill" style="width: {{ ratio }}%;"></div></div>
+          </div>
+          <div class="breakdown-row real">
+            <div class="lbl-row">
+              <span class="name">Real</span>
+              <span class="num">{{ total_real or 0 }} ({{ "%.0f"|format(100 - ratio) }}%)</span>
+            </div>
+            <div class="bar"><div class="fill" style="width: {{ 100 - ratio }}%;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3>Status Sistem</h3>
+        <p class="sub">Konfigurasi & runtime saat ini</p>
+
+        <div class="meta-rows">
+          <div class="meta-row">
+            <span class="k">Model AI</span>
+            <span class="v"><span class="badge real">Online</span></span>
+          </div>
+          <div class="meta-row">
+            <span class="k">Database</span>
+            <span class="v"><span class="badge real">Connected</span></span>
+          </div>
+          <div class="meta-row">
+            <span class="k">Backbone</span>
+            <span class="v mono">CNN-LSTM Hybrid</span>
+          </div>
+          <div class="meta-row">
+            <span class="k">Threshold</span>
+            <span class="v mono">0.5</span>
+          </div>
+          <div class="meta-row">
+            <span class="k">Max Frames</span>
+            <span class="v mono">30</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recent activity -->
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 24px 32px; border-bottom: 1px solid var(--line);">
+        <h3 style="margin: 0;">Aktivitas Terbaru</h3>
+        <p class="sub" style="margin: 4px 0 0;">10 scan paling baru di seluruh sistem</p>
+      </div>
+
+      {% if activities and activities|length > 0 %}
+        <table class="data">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>File</th>
+              <th>Verdict</th>
+              <th>Confidence</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for act in activities %}
+              {% set is_fake = act.prediction == 'FAKE' %}
+              {% set uname = act.owner.username if act.owner else 'Unknown' %}
+              <tr>
+                <td>
+                  <div style="display:flex;align-items:center;gap:10px;">
+                    <span style="width:30px;height:30px;border-radius:50%;background:var(--ink);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:0.78rem;">
+                      {{ uname[0]|upper }}
+                    </span>
+                    <span style="font-weight:600;">{{ uname }}</span>
+                  </div>
+                </td>
+                <td class="mono" style="font-size:0.85rem;">{{ act.filename }}</td>
+                <td>
+                  <span class="badge {% if is_fake %}fake{% else %}real{% endif %}">{{ act.prediction }}</span>
+                </td>
+                <td>
+                  <div class="confidence-bar {% if not is_fake %}is-real{% endif %}">
+                    <div class="track">
+                      <div class="fill" style="width: {{ act.confidence }}%;"></div>
+                    </div>
+                    <div class="pct">{{ "%.0f"|format(act.confidence) }}%</div>
+                  </div>
+                </td>
+                <td class="mono">{{ act.timestamp.strftime('%d %b, %H:%M') if act.timestamp else '—' }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <div style="padding: 48px 32px; text-align: center; color: var(--ink-mute);">
+          Belum ada aktivitas scan tercatat.
+        </div>
+      {% endif %}
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

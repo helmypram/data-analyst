@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Masuk — DeepDetect</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="auth-wrap">
+
+  <!-- LEFT: editorial dark side -->
+  <div class="auth-side">
+    <a href="{{ url_for('home') }}" class="brand-row">
+      <span class="brand-mark">deep</span><span>detect</span><sup>®</sup>
+    </a>
+
+    <div>
+      <h2>Selamat datang <span class="accent">kembali.</span></h2>
+      <p class="lede">Masuk untuk mulai scan video, lihat riwayat deteksi, dan mengelola akun Anda.</p>
+
+      <blockquote class="quote">
+        Manipulasi video sintetis adalah salah satu ancaman informasi terbesar dekade ini. DeepDetect dibangun untuk membantu siapapun memverifikasi keaslian konten visual.
+        <span class="author">— Helmy Pramudita, Skripsi Universitas Esa Unggul</span>
+      </blockquote>
+    </div>
+
+    <div class="foot">© 2025 DeepDetect — All rights reserved.</div>
+  </div>
+
+  <!-- RIGHT: login form -->
+  <div class="auth-card">
+    <h1>Masuk</h1>
+    <p class="sub">Gunakan akun yang sudah terdaftar.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}" style="margin-bottom: 16px;">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('login') }}">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autocomplete="username" autofocus>
+      </div>
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="current-password">
+      </div>
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Masuk</button>
+    </form>
+
+    <div class="auth-foot">
+      Belum punya akun? <a href="{{ url_for('register') }}">Daftar di sini</a>
+    </div>
+
+    <div style="margin-top: 16px; text-align: center;">
+      <a href="{{ url_for('home') }}" class="muted" style="font-size: 0.85rem;">← Kembali ke beranda</a>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

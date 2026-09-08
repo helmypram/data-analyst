@@ -1,0 +1,90 @@
+<!-- ══════════════════════════════════════════════════════════════
+     Modal pemutar video arsip.
+     Dipakai bersama oleh history.html (user) dan
+     admin_user_history.html (admin). Simpan di folder templates/.
+     ══════════════════════════════════════════════════════════════ -->
+
+<div id="vidModal" class="vid-modal" role="dialog" aria-modal="true"
+     aria-labelledby="vidTitle" hidden>
+  <div class="vid-panel" role="document">
+
+    <div class="vid-head">
+      <div class="vid-meta">
+        <span class="eyebrow">Arsip Video</span>
+        <strong id="vidTitle"></strong>
+        <span id="vidVerdict" class="badge"></span>
+      </div>
+      <button type="button" class="btn btn-ghost btn-sm" onclick="closeScan()">
+        Tutup
+      </button>
+    </div>
+
+    <video id="vidPlayer" class="vid-player" controls preload="metadata"
+           playsinline controlslist="nodownload"></video>
+
+    <p id="vidError" class="vid-error" hidden>
+      Video tidak dapat dimuat. Berkas kemungkinan sudah dihapus dari arsip server.
+    </p>
+
+  </div>
+</div>
+
+<script>
+  (function () {
+    const modal   = document.getElementById('vidModal');
+    const player  = document.getElementById('vidPlayer');
+    const title   = document.getElementById('vidTitle');
+    const verdict = document.getElementById('vidVerdict');
+    const errBox  = document.getElementById('vidError');
+    let lastFocus = null;
+
+    window.playScan = function (src, filename, prediction, confidence) {
+      lastFocus = document.activeElement;
+
+      title.textContent = filename;
+      verdict.textContent = prediction + ' · ' + confidence + '%';
+      verdict.className = 'badge ' + (prediction === 'FAKE' ? 'fake' : 'real');
+
+      errBox.hidden = true;
+      player.hidden = false;
+      player.src = src;
+
+      modal.hidden = false;
+      document.body.style.overflow = 'hidden';
+      player.focus();
+    };
+
+    window.closeScan = function () {
+      player.pause();
+      player.removeAttribute('src');
+      player.load();
+      modal.hidden = true;
+      document.body.style.overflow = '';
+      if (lastFocus) lastFocus.focus();
+    };
+
+    player.addEventListener('error', function () {
+      player.hidden = true;
+      errBox.hidden = false;
+    });
+
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) closeScan();
+    });
+
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !modal.hidden) closeScan();
+    });
+
+    // Tombol Putar dihubungkan lewat event delegation, bukan atribut
+    // onclick. Nama berkas bisa memuat tanda kutip atau karakter khusus
+    // yang akan merusak atribut inline; lewat data-* semuanya aman.
+    document.addEventListener('click', function (e) {
+      const btn = e.target.closest('.js-play-scan');
+      if (!btn) return;
+      e.preventDefault();
+      playScan(btn.dataset.src, btn.dataset.name,
+               btn.dataset.verdict, btn.dataset.confidence);
+    });
+  })();
+</script>

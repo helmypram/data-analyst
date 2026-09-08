@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}DeepDetect — Scan & Detect Deepfake Videos{% endblock %}</title>
+  <meta name="description" content="DeepDetect — sistem deteksi deepfake video berbasis CNN-LSTM. Scan video mencurigakan untuk mengetahui apakah dimanipulasi secara sintetis.">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  {% block extra_head %}{% endblock %}
+</head>
+<body>
+
+  <!-- ============= NAVBAR ============= -->
+  <nav class="nav">
+    <div class="nav-inner">
+      <a href="{{ url_for('home') }}" class="brand">
+        <span class="brand-mark">deep</span><span>detect</span><sup>®</sup>
+      </a>
+
+      <ul class="nav-menu" id="navMenu">
+        <li><a href="{{ url_for('home') }}#scanner" class="{% if request.endpoint == 'home' %}active{% endif %}">Scanner</a></li>
+        {% if current_user.is_authenticated %}
+        <li><a href="{{ url_for('history') }}" class="{% if request.endpoint == 'history' %}active{% endif %}">Riwayat</a></li>
+        {% endif %}
+        <li><a href="{{ url_for('home') }}#about">About</a></li>
+        <li><a href="{{ url_for('home') }}#tech">Teknologi</a></li>
+        {% if current_user.is_authenticated and current_user.role == 'admin' %}
+        <li><a href="{{ url_for('admin_dashboard') }}" class="{% if 'admin' in (request.endpoint or '') %}active{% endif %}">Admin</a></li>
+        {% endif %}
+      </ul>
+
+      <div class="nav-actions">
+        {% if current_user.is_authenticated %}
+          <a href="{{ url_for('profile') }}" class="user-pill">
+            <span class="avatar-mini">{{ current_user.username[0]|upper }}</span>
+            <span class="uname">{{ current_user.username }}</span>
+            <span class="role-tag">{{ current_user.role }}</span>
+          </a>
+          <a href="{{ url_for('logout') }}" class="btn btn-outline btn-sm">Logout</a>
+        {% else %}
+          <a href="{{ url_for('login') }}" class="btn btn-ghost btn-sm">Masuk</a>
+          <a href="{{ url_for('register') }}" class="btn btn-outline btn-sm">Daftar</a>
+        {% endif %}
+        <button class="nav-toggle" id="navToggle" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ============= FLASH ============= -->
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      <div class="flash-stack">
+        {% for category, message in messages %}
+          <div class="flash {{ category }}">{{ message }}</div>
+        {% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  <!-- ============= MAIN ============= -->
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- ============= FOOTER ============= -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a href="{{ url_for('home') }}" class="brand">
+            <span class="brand-mark">deep</span><span>detect</span><sup>®</sup>
+          </a>
+          <p>Sistem deteksi deepfake video berbasis CNN-BiLSTM. Skripsi Universitas Esa Unggul, Jurusan Sistem Informasi.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Produk</h5>
+          <a href="{{ url_for('home') }}#scanner">Scanner</a>
+          {% if current_user.is_authenticated %}<a href="{{ url_for('history') }}">Riwayat</a>{% endif %}
+          <a href="{{ url_for('home') }}#tech">Teknologi</a>
+        </div>
+        <div class="footer-col">
+          <h5>Tentang</h5>
+          <a href="{{ url_for('home') }}#about">About Us</a>
+          <a href="{{ url_for('home') }}#tech">Teknologi</a>
+          <a href="#contact">Contact</a>
+        </div>
+        <div class="footer-col">
+          <h5>Akun</h5>
+          {% if current_user.is_authenticated %}
+            <a href="{{ url_for('profile') }}">Profil</a>
+            <a href="{{ url_for('logout') }}">Logout</a>
+          {% else %}
+            <a href="{{ url_for('login') }}">Masuk</a>
+            <a href="{{ url_for('register') }}">Daftar</a>
+          {% endif %}
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© {{ 2026 }} DeepDetect. Helmy Pramudita — Universitas Esa Unggul.</span>
+        <span>Built with Flask · TensorFlow · MTCNN</span>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile nav toggle
+    const t = document.getElementById('navToggle');
+    const m = document.getElementById('navMenu');
+    if (t && m) t.addEventListener('click', () => m.classList.toggle('is-open'));
+
+    // Auto-dismiss flash messages after 4s
+    setTimeout(() => {
+      document.querySelectorAll('.flash').forEach(f => {
+        f.style.transition = 'opacity 0.3s';
+        f.style.opacity = '0';
+        setTimeout(() => f.remove(), 300);
+      });
+    }, 4000);
+  </script>
+
+  {% block extra_scripts %}{% endblock %}
+</body>
+</html>

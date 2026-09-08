@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar — DeepDetect</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<div class="auth-wrap">
+
+  <div class="auth-side">
+    <a href="{{ url_for('home') }}" class="brand-row">
+      <span class="brand-mark">deep</span><span>detect</span><sup>®</sup>
+    </a>
+
+    <div>
+      <h2>Bergabung <span class="accent">sekarang.</span></h2>
+      <p class="lede">Buat akun gratis untuk mulai scan video deepfake dan menyimpan riwayat deteksi Anda.</p>
+
+      <blockquote class="quote">
+        Akun DeepDetect memberikan akses penuh ke scanner berbasis CNN-LSTM, riwayat scan otomatis, dan dashboard statistik personal Anda.
+        <span class="author">— Tim DeepDetect</span>
+      </blockquote>
+    </div>
+
+    <div class="foot">© 2025 DeepDetect — All rights reserved.</div>
+  </div>
+
+  <div class="auth-card">
+    <h1>Daftar Akun</h1>
+    <p class="sub">Buat akun baru dalam beberapa detik.</p>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="flash {{ category }}" style="margin-bottom: 16px;">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('register') }}" id="register-form">
+      <div class="form-group">
+        <label for="username">Username</label>
+        <input type="text" id="username" name="username" required autocomplete="username" minlength="3" autofocus>
+      </div>
+
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input type="password" id="password" name="password" required autocomplete="new-password" minlength="6">
+        <small class="muted" style="display:block; margin-top:6px; font-size:0.8rem;">Minimal 6 karakter.</small>
+      </div>
+
+      <div class="form-group">
+        <label for="confirm_password">Ulangi Password</label>
+        <input type="password" id="confirm_password" name="confirm_password" required autocomplete="new-password" minlength="6">
+        <small id="pw-hint" style="display:block; margin-top:6px; font-size:0.8rem;"></small>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-block btn-lg">Daftar</button>
+    </form>
+
+    <div class="auth-foot">
+      Sudah punya akun? <a href="{{ url_for('login') }}">Masuk di sini</a>
+    </div>
+
+    <div style="margin-top: 16px; text-align: center;">
+      <a href="{{ url_for('home') }}" class="muted" style="font-size: 0.85rem;">← Kembali ke beranda</a>
+    </div>
+  </div>
+
+</div>
+
+<script>
+  (function () {
+    const pw   = document.getElementById('password');
+    const cpw  = document.getElementById('confirm_password');
+    const hint = document.getElementById('pw-hint');
+
+    function checkMatch() {
+      if (!cpw.value) {
+        cpw.setCustomValidity('');
+        hint.textContent = '';
+        return;
+      }
+      if (pw.value !== cpw.value) {
+        cpw.setCustomValidity('Password tidak cocok');
+        hint.textContent = '✗ Password tidak cocok';
+        hint.style.color = '#e5484d';
+      } else {
+        cpw.setCustomValidity('');
+        hint.textContent = '✓ Password cocok';
+        hint.style.color = '#30a46c';
+      }
+    }
+
+    pw.addEventListener('input', checkMatch);
+    cpw.addEventListener('input', checkMatch);
+
+    document.getElementById('register-form').addEventListener('submit', function (e) {
+      checkMatch();
+      if (pw.value !== cpw.value) {
+        e.preventDefault();
+        cpw.focus();
+      }
+    });
+  })();
+</script>
+
+</body>
+</html>
